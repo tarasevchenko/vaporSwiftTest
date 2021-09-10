@@ -3,6 +3,15 @@ import FluentPostgresDriver
 import Vapor
 
 
+extension Environment {
+    
+    static var databaseURL: URL {
+        guard let urlString = Environment.get("DATABASE_URL"), let url = URL(string: urlString) else {
+            fatalError("DATABASE_URL not configured")
+        }
+        return url
+    }
+}
 
 public func configure(_ app: Application) throws {
   let encoder = JSONEncoder()
@@ -15,17 +24,8 @@ public func configure(_ app: Application) throws {
   
   ContentConfiguration.global.use(encoder: encoder, for: .json)
   ContentConfiguration.global.use(decoder: decoder, for: .json)
-  
-    if let databaseURL = Environment.get("DATABASE_URL"), var postgresConfig = PostgresConfiguration(url: databaseURL) {
-        postgresConfig.tlsConfiguration = .forClient(certificateVerification: .none)
-        app.databases.use(.postgres(
-            configuration: postgresConfig
-        ), as: .psql)
-    } else {
-        
-    }
     
-    try app.databases.use(.postgres(hostname: "localhost", username: "postgres", password: "", database: "notesdb"), as: .psql)
+try app.databases.use(.postgres(url: Environment.databaseURL), as: .psql)
   
   app.middleware.use(ErrorMiddleware.default(environment: app.environment))
   
