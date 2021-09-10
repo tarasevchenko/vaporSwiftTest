@@ -16,13 +16,15 @@ public func configure(_ app: Application) throws {
   ContentConfiguration.global.use(encoder: encoder, for: .json)
   ContentConfiguration.global.use(decoder: decoder, for: .json)
   
-    let databaseConfig: Post
-    if let url = Environment.get("DATABASE_URL") {
-      // configuring database
-      databaseConfig = PostgreSQLDatabaseConfig(url: url, transport: .unverifiedTLS)!
+    if let databaseURL = Environment.get("DATABASE_URL"), var postgresConfig = PostgresConfiguration(url: databaseURL) {
+        postgresConfig.tlsConfiguration = .forClient(certificateVerification: .none)
+        app.databases.use(.postgres(
+            configuration: postgresConfig
+        ), as: .psql)
     } else {
-      // ...
+        
     }
+    
     try app.databases.use(.postgres(hostname: "localhost", username: "postgres", password: "", database: "notesdb"), as: .psql)
   
   app.middleware.use(ErrorMiddleware.default(environment: app.environment))
