@@ -6,11 +6,12 @@
 //
 
 import Fluent
+import FluentPostgresDriver
 
 struct CreateUsers: Migration {
     func prepare(on database: Database) -> EventLoopFuture<Void> {
         database.schema(User.schema)
-            .field("id", .uuid, .identifier(auto: true))
+            .id()
             .field("username", .string, .required)
             .unique(on: "username")
             .field("password_hash", .string, .required)

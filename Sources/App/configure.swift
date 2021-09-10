@@ -1,6 +1,8 @@
 import Fluent
-import FluentSQLiteDriver
+import FluentPostgresDriver
 import Vapor
+
+
 
 public func configure(_ app: Application) throws {
   let encoder = JSONEncoder()
@@ -14,7 +16,7 @@ public func configure(_ app: Application) throws {
   ContentConfiguration.global.use(encoder: encoder, for: .json)
   ContentConfiguration.global.use(decoder: decoder, for: .json)
   
-  app.databases.use(.sqlite(.file("DiningIn.sqlite")), as: .sqlite)
+    try app.databases.use(.postgres(hostname: "localhost", username: "postgres", password: "", database: "notesdb"), as: .psql)
   
   app.middleware.use(ErrorMiddleware.default(environment: app.environment))
   

@@ -6,6 +6,7 @@
 //
 
 import Fluent
+import FluentPostgresDriver
 
 struct CreateNotes: Migration {
     func prepare(on database: Database) -> EventLoopFuture<Void> {

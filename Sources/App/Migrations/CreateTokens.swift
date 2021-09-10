@@ -6,11 +6,12 @@
 //
 
 import Fluent
+import FluentPostgresDriver
 
 struct CreateTokens: Migration {
     func prepare(on database: Database) -> EventLoopFuture<Void> {
         database.schema(Token.schema)
-            .field("id", .uuid, .identifier(auto: true))
+            .id()
             .field("user_id", .uuid, .references("users", "id"))
             .field("value", .string, .required)
             .unique(on: "value")
