@@ -13,7 +13,7 @@ struct CreateNotes: Migration {
         return database.schema("notes")
             .id()
             .field("title", .string, .required)
-            .field("text", .date, .required)
+            .field("text", .string, .required)
             .field("host_id", .uuid, .references("users", "id"), .required)
             .field("created_at", .datetime, .required)
             .field("updated_at", .datetime, .required)
